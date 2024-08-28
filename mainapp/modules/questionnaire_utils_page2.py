@@ -22,16 +22,17 @@ import re
 def parse_text_to_json(text_content):
     """
     Converts structured text content into a JSON-like dictionary, parsing questions and their answers.
-
+    
     Parameters:
     - text_content (str): Text content containing questions and answers in a structured format.
-
+    
     Returns:
-    - dict: A dictionary representing the parsed content with questions as keys and their details (question text and answers) as values.
+    - dict: A dictionary representing the parsed content with questions as keys and their details 
+            (question text and answers) as values.
     """
     data = {}
-    # Modified regex pattern to match questions with numbers and optional alphabet characters,
-    # and allowing spaces around the period.
+    # Updated regex pattern to match questions with numbers followed by optional alphabet characters
+    # (e.g., 1., 4a., 5b.), allowing spaces around the period.
     question_re = re.compile(r'^\s*(\d+[a-zA-Z]?)\s*\.\s*(.*)')
     answer_re = re.compile(r'^\s*-\s*(.*)')  # Adjusted to allow optional spaces around the dash
 
