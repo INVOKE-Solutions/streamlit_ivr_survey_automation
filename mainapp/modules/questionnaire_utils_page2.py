@@ -17,6 +17,8 @@ def parse_questions_and_answers(json_data):
         questions_and_answers[q_key] = {'question': question_text, 'answers': answers}
     return questions_and_answers
 
+import re
+
 def parse_text_to_json(text_content):
     """
     Converts structured text content into a JSON-like dictionary, parsing questions and their answers.
@@ -28,7 +30,9 @@ def parse_text_to_json(text_content):
     - dict: A dictionary representing the parsed content with questions as keys and their details (question text and answers) as values.
     """
     data = {}
-    question_re = re.compile(r'^(\d+)\.\s*(.*)')  # Adjusted to allow optional spaces after the period
+    # Modified regex pattern to match questions with numbers and optional alphabet characters,
+    # and allowing spaces around the period.
+    question_re = re.compile(r'^\s*(\d+[a-zA-Z]?)\s*\.\s*(.*)')
     answer_re = re.compile(r'^\s*-\s*(.*)')  # Adjusted to allow optional spaces around the dash
 
     current_question = ""
@@ -44,7 +48,7 @@ def parse_text_to_json(text_content):
         elif answer_match and current_question:
             answer_text = answer_match.groups()[0]
             flow_no = len(data[current_question]["answers"]) + 1
-            flow_no_key = f"FlowNo_{int(q_number)+1}={flow_no}"
+            flow_no_key = f"FlowNo_{current_question}={flow_no}"
             data[current_question]["answers"][flow_no_key] = answer_text
 
     return data
