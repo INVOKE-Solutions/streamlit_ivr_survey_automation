@@ -2,20 +2,20 @@ import re
 import streamlit as st
 import json
 
+import re
+
 def parse_text_to_json(text_content):
     """
     Parses structured text containing survey questions and answers into a JSON-like dictionary.
-    Adjusts FlowNo to start from 2 for the first question as specified.
+    Adjusts FlowNo to start from 1 for each question's first answer and increments sequentially.
     """
-    import re
-
-    # Initialize variables
     data = {}
     current_question = None
+    global_flow_no = 2  # Start FlowNo from 2 as specified
 
-    # Regular expressions for identifying parts of the text
-    question_re = re.compile(r'^(\d+)\.\s*(.*)')  # Adjusted to allow optional spaces after the period
-    answer_re = re.compile(r'^\s*-\s*(.*)')  # Adjusted to allow optional spaces around the dash
+    # Regular expressions for identifying questions and answers
+    question_re = re.compile(r'^(\d+[a-zA-Z]?)\.\s*(.*)')  # Matches question numbers with optional alpha suffix
+    answer_re = re.compile(r'^\s*[-(]\s*(.*)')  # Matches answers with leading dash or parenthesis
 
     for line in text_content.splitlines():
         question_match = question_re.match(line)
@@ -24,15 +24,15 @@ def parse_text_to_json(text_content):
         if question_match:
             # New question found
             q_number, q_text = question_match.groups()
-            current_question = f"Q{q_number}"
+            current_question = f"Q{q_number}"  # Handles identifiers like 'Q5', 'Q5a', etc.
             data[current_question] = {"question": q_text, "answers": {}}
+            # Increment global_flow_no only for questions
+            global_flow_no += 1
         elif answer_match and current_question:
             # Answer found for the current question
-            answer_text = answer_match.groups()[0]
-            # Assuming FlowNo starts at 2 for the first question and increments for each answer within a question
-            flow_no = len(data[current_question]["answers"]) + 1
-            # Adjusting FlowNo to start from 2 for the first question and increment accordingly for each answer
-            flow_no_key = f"FlowNo_{int(q_number)+1}={flow_no}"
+            answer_text = answer_match.groups()[0].strip('() ')
+            answer_flow_no = len(data[current_question]["answers"]) + 1  # FlowNo starts at 1 for each question's answers
+            flow_no_key = f"FlowNo_{global_flow_no - 1}={answer_flow_no}"  # Use global_flow_no - 1 to align numbering
             data[current_question]["answers"][flow_no_key] = answer_text
 
     return data
@@ -73,6 +73,7 @@ def flatten_json_structure(flow_no_mappings):
     """Flatten the JSON structure to simplify the mapping access."""
     if not flow_no_mappings:
         return {}
+    # Flattening the JSON structure to a single dictionary with FlowNo as keys
     return {k: v for question in flow_no_mappings.values() for k, v in question["answers"].items()}
 
 def drop_duplicates_from_dataframe(df):

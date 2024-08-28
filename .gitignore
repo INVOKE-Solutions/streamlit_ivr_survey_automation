@@ -125,7 +125,7 @@ cython_debug/
 
 # Project-specific ignores
 __init__/
-.streamlit/secrets.toml
+# .streamlit/secrets.toml
 
 # Ignore specific structure files and survey scripts
 .surveyscript/pjscripts.txt

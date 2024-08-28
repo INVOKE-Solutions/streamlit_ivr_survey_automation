@@ -3,7 +3,7 @@ from PIL import Image
 from datetime import datetime
 import pandas as pd
 import json
-from modules.keypress_decoder_utils_page3 import parse_text_to_json, custom_sort, classify_income, drop_duplicates_from_dataframe
+from modules.keypress_decoder_utils_page3 import parse_text_to_json, custom_sort, classify_income,flatten_json_structure, drop_duplicates_from_dataframe
 
 # Configure the default settings of the page.
 icon = Image.open('./images/invoke_logo.png')
@@ -57,10 +57,9 @@ if uploaded_file is not None:
 else:
     st.info("Please upload a file to parse questions and their answers.")
 
-simple_mappings = {k: v for question in flow_no_mappings.values() for k, v in question["answers"].items()}
-for q_key, q_data in flow_no_mappings.items():
-    for answer_key, answer_value in q_data["answers"].items():
-        simple_mappings[answer_key] = answer_value
+# Generate simple_mappings correctly by flattening the parsed data structure
+simple_mappings = flatten_json_structure(flow_no_mappings)  # Ensure that keys match the parsed structure
+st.write("Simple Mappings:", simple_mappings)  # Debugging: Review mappings
 
 if 'renamed_data' not in st.session_state:
     st.session_state['renamed_data'] = pd.DataFrame()
@@ -89,18 +88,20 @@ def process_data():
                 drop_cols.append(col)
                 continue
 
-            ### Decoder ###
+            # Automatically map answers to their respective flow numbers using the simple_mappings
             all_mappings = {}
             excluded_flow_nos[col] = []
 
             for idx, val in enumerate(sorted_unique_values):
                 if pd.notna(val):
-                    autofill_value = simple_mappings.get(val, "")
+                    # Ensure correct key format matching between backend and frontend
+                    autofill_value = simple_mappings.get(val, val)  # Use val if key not found to avoid empty autofill
                     unique_key = f"{col}_{val}_{idx}"
                     if st.checkbox(f"Drop '{val}'", key=f"exclude_{unique_key}"):
                         excluded_flow_nos[col].append(val)
                         continue
 
+                    # Input box for renaming the value with the autofill value as default
                     readable_val = st.text_input(f"Rename '{val}' to:", value=autofill_value, key=unique_key)
                     if readable_val:
                         all_mappings[val] = readable_val

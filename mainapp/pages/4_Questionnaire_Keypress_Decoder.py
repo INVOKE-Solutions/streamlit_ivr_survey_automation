@@ -39,6 +39,10 @@ set_dark_mode_css()  # Apply the dark mode CSS
 st.title('Questionnaire Definer and Keypress Decoder 🧮')
 st.markdown("### Upload Script Files (.txt, .json format)")
 
+# Initialize session state for 'qa_dict' to prevent KeyError
+if 'qa_dict' not in st.session_state:
+    st.session_state['qa_dict'] = {}
+
 uploaded_file = st.file_uploader("Choose a txt with formatting or json with flow-mapping file", type=['txt', 'json'])
 
 flow_no_mappings = {}
@@ -89,6 +93,11 @@ if cleaned_data.empty:
     st.warning("No cleaned data available for renaming.")
 else:
     column_names_to_display = [col for col in cleaned_data.columns]  # Placeholder for actual column names
+    
+    # Count matching between columns and questions
+    question_keys = list(st.session_state['qa_dict'].keys())  # ['Q1', 'Q2', ..., 'Q4a', 'Q4b', ...]
+    question_count = len(question_keys)
+    column_count = len(column_names_to_display)
 
     # Manual input for renaming columns, with special handling for the first and last columns
     new_column_names = []
@@ -99,10 +108,12 @@ else:
         elif idx == len(column_names_to_display) - 1:
             # Last column reserved for "Set"
             default_value = "Set"
-        elif file_parsed:
-            # Adjust question numbering to start from column 1, not 0
-            question_key = f"Q{idx}"  # Adjusted to match questions starting from 1
-            default_value = st.session_state['qa_dict'].get(question_key, {}).get('question', default_name)
+        elif file_parsed and idx <= question_count:
+            # Adjust question numbering to match correctly
+            question_key = question_keys[idx - 1]  # Use correct index for question_keys
+            question_identifier = question_key.lstrip('Q')  # Remove the 'Q'
+            question_text = st.session_state['qa_dict'].get(question_key, {}).get('question', default_name)
+            default_value = f"{question_identifier}. {question_text}" 
         else:
             default_value = default_name
 
