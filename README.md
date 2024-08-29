@@ -1,4 +1,4 @@
-# **🚀 Streamlit Survey Automation**
+# **🪐 Streamlit Survey Automation**
 
 ---
 
