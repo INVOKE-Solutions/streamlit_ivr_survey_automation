@@ -19,7 +19,7 @@ def set_dark_mode_css():
     <style>
         header {visibility: hidden;}
         footer {visibility: hidden;}
-        #root > div:nth-child(1) > div > div > div > div > section > div {padding-top: 0rem; padding-bottom: 4rem;}
+
         html, body, [class*="View"] {
             color: #ffffff !important;  /* Text Color */
             background-color: #111111 !important;  /* Background Color */
