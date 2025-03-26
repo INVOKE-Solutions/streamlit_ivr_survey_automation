@@ -16,6 +16,9 @@ def set_dark_mode_css():
     # Apply dark mode CSS to the Streamlit app.
     dark_mode_css = """
     <style>
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+        
         html, body, [class*="View"] {
             color: #ffffff;  /* Text Color */
             background-color: #111111;  /* Background Color */

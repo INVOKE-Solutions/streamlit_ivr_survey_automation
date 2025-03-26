@@ -18,6 +18,9 @@ st.set_page_config(
 def set_dark_mode_css():
     dark_mode_css = """
     <style>
+        header {visibility: hidden;}
+        footer {visibility: hidden;}
+
         html, body, [class*="View"] {
             color: #ffffff;  /* Text Color */
             background-color: #111111;  /* Background Color */
