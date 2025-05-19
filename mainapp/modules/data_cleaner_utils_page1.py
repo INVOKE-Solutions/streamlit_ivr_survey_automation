@@ -71,7 +71,8 @@ def process_file(uploaded_file):
 
     df.dropna(axis='columns', how='all', inplace=True)
 
-    df.columns = df.iloc[0]
+    df.columns = df.iloc[0]  # Set columns from first row
+    df = df[1:]  # Drop the first row, which is now the header
 
     df_phonenum = df[['PhoneNo']]
     df_response = df.loc[:, 'UserKeyPress':]
