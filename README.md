@@ -41,7 +41,7 @@
 
 ## **1. Overview 📖**
 
-The **IVR Data Processing Suite** is a comprehensive toolset designed for cleaning, processing, and analyzing IVR (Interactive Voice Response) campaign data. It utilizes a combination of Streamlit and FastAPI to provide an intuitive user interface for file uploads, data cleaning, questionnaire definition, keypress decoding, and data analysis. The suite is split into three main components: IVR Data Cleaner & Pre-Processor App, Questionnaire Definer, and Keypresses Decoder, which are built to work seamlessly together or as standalone modules.
+The **IVR Data Processing Suite** is a comprehensive toolset designed for cleaning and processing IVR (Interactive Voice Response) data (the campaign data) . It utilizes a combination of Streamlit and FastAPI to provide an intuitive user interface for file uploads, data cleaning, questionnaire definition, keypress decoding, and data analysis. The suite is split into three main components: IVR Data Cleaner & Pre-Processor App, Questionnaire Definer, and Keypresses Decoder, which are built to work seamlessly together or as standalone modules.
 
 ---
 
